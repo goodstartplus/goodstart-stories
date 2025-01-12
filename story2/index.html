@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Story 1</title>
+    <title>Story</title>
     <link rel="stylesheet" href="/assets/style.css">
     <style>
         * {
@@ -12,25 +12,19 @@
             box-sizing: border-box;
         }
 
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
         .carousel {
             display: flex;
-            overflow: hidden;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
             width: 100vw;
             height: 100vh;
-            scroll-snap-type: x mandatory;
         }
 
         .story {
             flex: 0 0 100vw;
             height: 100vh;
-            scroll-snap-align: start;
             position: relative;
+            scroll-snap-align: start;
         }
 
         .story img, .story video {
@@ -39,62 +33,117 @@
             object-fit: cover;
         }
 
-        .progress-bar {
+        .progress-container {
             position: absolute;
             top: 10px;
             left: 10px;
             right: 10px;
-            height: 5px;
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.3);
+            margin: 0 2px;
+            overflow: hidden;
         }
 
         .progress-bar-fill {
             height: 100%;
-            width: 0%;
-            background-color: #ff6600;
-            border-radius: 5px;
+            background-color: white;
+            width: 0;
+            transition: width 5s linear;
         }
     </style>
 </head>
 <body>
+    <div class="progress-container" id="progress-container">
+        <!-- Progress bars serão inseridas via JavaScript -->
+    </div>
+
     <div class="carousel" id="carousel">
         <div class="story">
             <img src="imagem1.jpg" alt="Imagem Story 1">
-            <div class="progress-bar"><div class="progress-bar-fill"></div></div>
         </div>
         <div class="story">
-            <video src="video1.mp4" autoplay controls></video>
-            <div class="progress-bar"><div class="progress-bar-fill"></div></div>
+            <video src="video1.mp4" controls playsinline></video>
+        </div>
+        <div class="story">
+            <img src="imagem1.jpg" alt="Imagem Story 1">
+        </div>
+        <div class="story">
+            <video src="https://www.youtube.com/shorts/d7Qqk1bqajQ" controls playsinline></video>
+        </div>
+        <div class="story">
+            <video src="https://www.youtube.com/watch?v=BWZiA72iHBQ" controls playsinline></video>
         </div>
     </div>
 
     <script>
+        const carousel = document.getElementById('carousel');
         const stories = document.querySelectorAll('.story');
-        let currentStory = 0;
+        const progressContainer = document.getElementById('progress-container');
+        
+        // Cria as barras de progresso com base na quantidade de slides
+        stories.forEach(() => {
+            const bar = document.createElement('div');
+            bar.classList.add('progress-bar');
+
+            const fill = document.createElement('div');
+            fill.classList.add('progress-bar-fill');
+            bar.appendChild(fill);
+
+            progressContainer.appendChild(bar);
+        });
 
         const progressBars = document.querySelectorAll('.progress-bar-fill');
+        let currentSlide = 0;
 
-        function nextStory() {
-            if (currentStory < stories.length - 1) {
-                currentStory++;
-                stories[currentStory].scrollIntoView({ behavior: 'smooth' });
-                animateProgress();
-            } else {
-                window.location.href = '/story2/'; // Navega para o próximo story
-            }
-        }
-
-        function animateProgress() {
-            progressBars.forEach((bar, index) => {
-                bar.style.width = index === currentStory ? '100%' : '0%';
+        function updateProgress(index) {
+            progressBars.forEach((bar, i) => {
+                if (i < index) {
+                    bar.style.width = '100%';
+                } else if (i === index) {
+                    bar.style.width = '0';
+                    setTimeout(() => {
+                        bar.style.width = '100%';
+                    }, 50);
+                } else {
+                    bar.style.width = '0';
+                }
             });
         }
 
-        document.addEventListener('click', nextStory);
-        document.addEventListener('touchstart', nextStory);
+        // Pausa vídeos fora de exibição
+        function pauseInactiveVideos() {
+            stories.forEach((story, index) => {
+                const video = story.querySelector('video');
+                if (video) {
+                    if (index === currentSlide) {
+                        video.play();
+                    } else {
+                        video.pause();
+                        video.currentTime = 0;
+                    }
+                }
+            });
+        }
 
-        animateProgress();
+        carousel.addEventListener('scroll', () => {
+            const slideIndex = Math.round(carousel.scrollLeft / window.innerWidth);
+            if (slideIndex !== currentSlide) {
+                currentSlide = slideIndex;
+                updateProgress(currentSlide);
+                pauseInactiveVideos();
+            }
+        });
+
+        // Inicializa a barra de progresso
+        updateProgress(0);
+        pauseInactiveVideos();
     </script>
 </body>
 </html>
