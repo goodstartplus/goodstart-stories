@@ -24,11 +24,23 @@
             height: 100%;
             border: none;
         }
+        #next-video-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="story">
         <iframe id="youtube-player" src="https://www.youtube.com/embed/videoseries?list=PLgsOKGPevMvDW4vesGBUnz_kNe6fIg3tC&autoplay=1&mute=0&controls=0&loop=1&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&shuffle=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <button id="next-video-btn">Próximo Vídeo →</button>
     </div>
 
     <script>
@@ -54,22 +66,23 @@
                 handleSwipe();
             });
 
-            document.addEventListener('click', (e) => {
-                nextVideo();
+            document.getElementById('next-video-btn').addEventListener('click', () => {
+                shuffleNextVideo();
             });
         }
 
         function handleSwipe() {
             if (touchEndY < touchStartY - 50) {
-                nextVideo();
+                shuffleNextVideo();
             } else if (touchEndY > touchStartY + 50) {
                 prevVideo();
             }
         }
 
-        function nextVideo() {
-            if (player && typeof player.nextVideo === 'function') {
-                player.nextVideo();
+        function shuffleNextVideo() {
+            if (player && typeof player.playVideoAt === 'function') {
+                const randomIndex = Math.floor(Math.random() * player.getPlaylist().length);
+                player.playVideoAt(randomIndex);
             }
         }
 
