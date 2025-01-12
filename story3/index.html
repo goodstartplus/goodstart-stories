@@ -5,18 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Story 1</title>
     <link rel="stylesheet" href="/assets/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .carousel {
+            display: flex;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            scroll-snap-type: x mandatory;
+        }
+
+        .story {
+            flex: 0 0 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
+            position: relative;
+        }
+
+        .story img, .story video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .progress-bar {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            height: 5px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 5px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: #ff6600;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-
-<div class="carousel">
-    <div class="story">
-        <img src="imagem1.jpg" alt="Imagem Story 1">
+    <div class="carousel" id="carousel">
+        <div class="story">
+            <img src="imagem1.jpg" alt="Imagem Story 1">
+            <div class="progress-bar"><div class="progress-bar-fill"></div></div>
+        </div>
+        <div class="story">
+            <video src="video1.mp4" autoplay controls></video>
+            <div class="progress-bar"><div class="progress-bar-fill"></div></div>
+        </div>
     </div>
-    <div class="story">
-        <video src="video1.mp4" controls autoplay muted></video>
-    </div>
-</div>
 
-<script src="/assets/script.js"></script>
+    <script>
+        const stories = document.querySelectorAll('.story');
+        let currentStory = 0;
+
+        const progressBars = document.querySelectorAll('.progress-bar-fill');
+
+        function nextStory() {
+            if (currentStory < stories.length - 1) {
+                currentStory++;
+                stories[currentStory].scrollIntoView({ behavior: 'smooth' });
+                animateProgress();
+            } else {
+                window.location.href = '/story2/'; // Navega para o próximo story
+            }
+        }
+
+        function animateProgress() {
+            progressBars.forEach((bar, index) => {
+                bar.style.width = index === currentStory ? '100%' : '0%';
+            });
+        }
+
+        document.addEventListener('click', nextStory);
+        document.addEventListener('touchstart', nextStory);
+
+        animateProgress();
+    </script>
 </body>
 </html>
