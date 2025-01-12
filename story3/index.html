@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Story</title>
+    <title>Story Playlist</title>
     <link rel="stylesheet" href="/assets/style.css">
     <style>
         body, html {
@@ -24,51 +24,77 @@
             height: 100%;
             border: none;
         }
+        #next-video-button {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 8px 18px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        #next-video-button:hover {
+            background-color: #333;
+        }
     </style>
 </head>
 <body>
     <div class="story">
-        <iframe src="https://www.youtube.com/embed/d7Qqk1bqajQ?autoplay=1&mute=0&controls=0&loop=1&playlist=d7Qqk1bqajQ&modestbranding=1&rel=0&playsinline=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe id="youtube-player" src="https://www.youtube.com/embed/videoseries?list=PLgsOKGPevMvDW4vesGBUnz_kNe6fIg3tC&autoplay=1&mute=0&controls=0&loop=1&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&shuffle=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <button id="next-video-button">Próximo Vídeo →</button>
     </div>
 
     <script>
+        let player;
         let touchStartY = 0;
         let touchEndY = 0;
 
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            player.setShuffle(true); // Garante o shuffle ao carregar
+            document.getElementById('next-video-button').addEventListener('click', () => {
+                nextVideo();
+            });
+
+            document.addEventListener('touchstart', (e) => {
+                touchStartY = e.changedTouches[0].screenY;
+            });
+
+            document.addEventListener('touchend', (e) => {
+                touchEndY = e.changedTouches[0].screenY;
+                handleSwipe();
+            });
+        }
+
         function handleSwipe() {
-            if (touchEndY < touchStartY - 100) {
-                nextStory();
-            } else if (touchEndY > touchStartY + 100) {
-                prevStory();
+            if (touchEndY < touchStartY - 50) {
+                nextVideo();
             }
         }
 
-        function nextStory() {
-            const nextStoryLink = {
-                '/story1/': '/story2/',
-                '/story2/': '/story3/',
-                '/story3/': '/story1/'
-            }[window.location.pathname];
-            window.location.href = nextStoryLink;
+        function nextVideo() {
+            if (player && typeof player.nextVideo === 'function') {
+                player.setShuffle(true);  // Garante o modo aleatório ao clicar
+                player.nextVideo();
+            }
         }
 
-        function prevStory() {
-            const prevStoryLink = {
-                '/story1/': '/story3/',
-                '/story2/': '/story1/',
-                '/story3/': '/story2/'
-            }[window.location.pathname];
-            window.location.href = prevStoryLink;
-        }
-
-        document.addEventListener('touchstart', (e) => {
-            touchStartY = e.changedTouches[0].screenY;
-        });
-
-        document.addEventListener('touchend', (e) => {
-            touchEndY = e.changedTouches[0].screenY;
-            handleSwipe();
-        });
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     </script>
 </body>
 </html>
