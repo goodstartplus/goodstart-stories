@@ -6,105 +6,41 @@
     <title>Story</title>
     <link rel="stylesheet" href="/assets/style.css">
     <style>
-        .progress-container {
-            display: flex;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background-color: rgba(255, 255, 255, 0.3);
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: black;
         }
-
-        .progress-bar {
-            flex-grow: 1;
-            margin: 0 2px;
-            background-color: rgba(255, 255, 255, 0.5);
-            transition: background-color 0.3s ease;
-        }
-
-        .progress-bar.active {
-            background-color: #fff;
-        }
-
-        .carousel {
+        .story {
             width: 100vw;
             height: 100vh;
-            overflow: hidden;
-            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .story {
+        iframe {
             width: 100%;
             height: 100%;
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .story.active {
-            display: flex;
-        }
-
-        img, video {
-            max-width: 100%;
-            max-height: 100%;
+            border: none;
         }
     </style>
 </head>
 <body>
-    <div class="progress-container" id="progressContainer"></div>
-    <div class="carousel" id="carousel">
-        <div class="story active"><img src="imagem1.jpg" alt="Imagem Story 1"></div>
-        <div class="story"><video src="video1.mp4" controls autoplay></video></div>
+    <div class="story">
+        <iframe src="https://www.youtube.com/embed/d7Qqk1bqajQ?autoplay=1&mute=0&controls=0&loop=1&playlist=d7Qqk1bqajQ&modestbranding=1&rel=0&playsinline=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
 
     <script>
-        const slides = document.querySelectorAll('.story');
-        const progressContainer = document.getElementById('progressContainer');
-        let currentSlide = 0;
+        let touchStartY = 0;
+        let touchEndY = 0;
 
-        function createProgressBars() {
-            progressContainer.innerHTML = '';
-            slides.forEach(() => {
-                const bar = document.createElement('div');
-                bar.classList.add('progress-bar');
-                progressContainer.appendChild(bar);
-            });
-            updateProgressBar();
-        }
-
-        function updateProgressBar() {
-            const bars = document.querySelectorAll('.progress-bar');
-            bars.forEach((bar, index) => {
-                bar.classList.toggle('active', index === currentSlide);
-            });
-        }
-
-        function showSlide(index) {
-            slides.forEach((slide, i) => {
-                slide.classList.toggle('active', i === index);
-                const video = slide.querySelector('video');
-                if (video) {
-                    video.pause();
-                    video.currentTime = 0;
-                    if (i === index) {
-                        video.muted = false;
-                        video.play();
-                    }
-                }
-            });
-            updateProgressBar();
-        }
-
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % slides.length;
-            showSlide(currentSlide);
-        }
-
-        function prevSlide() {
-            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-            showSlide(currentSlide);
+        function handleSwipe() {
+            if (touchEndY < touchStartY - 100) {
+                nextStory();
+            } else if (touchEndY > touchStartY + 100) {
+                prevStory();
+            }
         }
 
         function nextStory() {
@@ -125,39 +61,14 @@
             window.location.href = prevStoryLink;
         }
 
-        document.addEventListener('click', (e) => {
-            const clickX = e.clientX;
-            const screenWidth = window.innerWidth;
-            if (clickX < screenWidth / 2) {
-                prevSlide();
-            } else {
-                nextSlide();
-            }
-        });
-
-        let touchStartX = 0;
-        let touchEndX = 0;
-
         document.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
         });
 
         document.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
             handleSwipe();
         });
-
-        function handleSwipe() {
-            const swipeDistance = touchEndX - touchStartX;
-            if (swipeDistance > 100) {
-                prevStory();
-            } else if (swipeDistance < -100) {
-                nextStory();
-            }
-        }
-
-        createProgressBars();
-        showSlide(currentSlide);
     </script>
 </body>
 </html>
