@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Story</title>
+    <title>Story Playlist</title>
     <link rel="stylesheet" href="/assets/style.css">
     <style>
         body, html {
@@ -24,51 +24,79 @@
             height: 100%;
             border: none;
         }
+        .next-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background-color: rgba(255, 255, 255, 0.7);
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .next-button:hover {
+            background-color: rgba(255, 255, 255, 1);
+        }
     </style>
 </head>
 <body>
     <div class="story">
-        <iframe src="https://www.youtube.com/embed/d7Qqk1bqajQ?autoplay=1&mute=0&controls=0&loop=1&playlist=d7Qqk1bqajQ&modestbranding=1&rel=0&playsinline=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe id="youtube-player" src="https://www.youtube.com/embed/videoseries?list=PLgsOKGPevMvDW4vesGBUnz_kNe6fIg3tC&autoplay=1&mute=0&controls=0&loop=1&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&shuffle=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <button class="next-button" onclick="nextVideo()">Próximo Vídeo →</button>
     </div>
 
     <script>
+        let player;
         let touchStartY = 0;
         let touchEndY = 0;
 
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            document.addEventListener('touchstart', (e) => {
+                touchStartY = e.changedTouches[0].screenY;
+            });
+
+            document.addEventListener('touchend', (e) => {
+                touchEndY = e.changedTouches[0].screenY;
+                handleSwipe();
+            });
+        }
+
         function handleSwipe() {
-            if (touchEndY < touchStartY - 100) {
-                nextStory();
-            } else if (touchEndY > touchStartY + 100) {
-                prevStory();
+            if (touchEndY < touchStartY - 50) {
+                nextVideo();
+            } else if (touchEndY > touchStartY + 50) {
+                prevVideo();
             }
         }
 
-        function nextStory() {
-            const nextStoryLink = {
-                '/story1/': '/story2/',
-                '/story2/': '/story3/',
-                '/story3/': '/story1/'
-            }[window.location.pathname];
-            window.location.href = nextStoryLink;
+        function nextVideo() {
+            if (player && player.nextVideo) {
+                player.nextVideo();
+            } else {
+                location.reload();
+            }
         }
 
-        function prevStory() {
-            const prevStoryLink = {
-                '/story1/': '/story3/',
-                '/story2/': '/story1/',
-                '/story3/': '/story2/'
-            }[window.location.pathname];
-            window.location.href = prevStoryLink;
+        function prevVideo() {
+            if (player && player.previousVideo) {
+                player.previousVideo();
+            }
         }
 
-        document.addEventListener('touchstart', (e) => {
-            touchStartY = e.changedTouches[0].screenY;
-        });
-
-        document.addEventListener('touchend', (e) => {
-            touchEndY = e.changedTouches[0].screenY;
-            handleSwipe();
-        });
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     </script>
 </body>
 </html>
