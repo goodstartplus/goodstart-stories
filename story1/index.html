@@ -54,24 +54,28 @@
                 touchEndY = e.changedTouches[0].screenY;
                 handleSwipe();
             });
+
+            document.addEventListener('click', (e) => {
+                handleSwipe();
+            });
         }
 
         function handleSwipe() {
-            if (touchEndY < touchStartY - 100) {
+            if (touchEndY < touchStartY - 50) {
                 nextVideo();
-            } else if (touchEndY > touchStartY + 100) {
+            } else if (touchEndY > touchStartY + 50) {
                 prevVideo();
             }
         }
 
         function nextVideo() {
-            if (player && player.nextVideo) {
+            if (player && typeof player.nextVideo === 'function') {
                 player.nextVideo();
             }
         }
 
         function prevVideo() {
-            if (player && player.previousVideo) {
+            if (player && typeof player.previousVideo === 'function') {
                 player.previousVideo();
             }
         }
