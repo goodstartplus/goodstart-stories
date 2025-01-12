@@ -45,7 +45,7 @@
 </head>
 <body>
     <div class="story">
-        <iframe id="youtube-player" src="https://www.youtube.com/embed/videoseries?list=PLgsOKGPevMvDW4vesGBUnz_kNe6fIg3tC&autoplay=1&mute=0&controls=0&loop=1&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&shuffle=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe id="youtube-player" src="https://www.youtube.com/embed/videoseries?list=PLgsOKGPevMvDW4vesGBUnz_kNe6fIg3tC&autoplay=1&mute=0&controls=0&loop=1&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&index=50" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <button id="next-video-button">Próximo Vídeo →</button>
     </div>
 
@@ -63,7 +63,6 @@
         }
 
         function onPlayerReady(event) {
-            player.setShuffle(true); // Garante o shuffle ao carregar
             document.getElementById('next-video-button').addEventListener('click', () => {
                 nextVideo();
             });
@@ -86,7 +85,6 @@
 
         function nextVideo() {
             if (player && typeof player.nextVideo === 'function') {
-                player.setShuffle(true);  // Garante o modo aleatório ao clicar
                 player.nextVideo();
             }
         }
