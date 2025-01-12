@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Story</title>
+    <title>Story Playlist</title>
     <link rel="stylesheet" href="/assets/style.css">
     <style>
         body, html {
@@ -28,7 +28,7 @@
 </head>
 <body>
     <div class="story">
-        <iframe src="https://www.youtube.com/embed/d7Qqk1bqajQ?autoplay=1&mute=0&controls=0&loop=1&playlist=d7Qqk1bqajQ&modestbranding=1&rel=0&playsinline=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/videoseries?list=PLgsOKGPevMvDW4vesGBUnz_kNe6fIg3tC&autoplay=1&mute=0&controls=0&loop=1&modestbranding=1&rel=0&playsinline=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
 
     <script>
@@ -37,28 +37,20 @@
 
         function handleSwipe() {
             if (touchEndY < touchStartY - 100) {
-                nextStory();
+                nextVideo();
             } else if (touchEndY > touchStartY + 100) {
-                prevStory();
+                prevVideo();
             }
         }
 
-        function nextStory() {
-            const nextStoryLink = {
-                '/story1/': '/story2/',
-                '/story2/': '/story3/',
-                '/story3/': '/story1/'
-            }[window.location.pathname];
-            window.location.href = nextStoryLink;
+        function nextVideo() {
+            const iframe = document.querySelector('iframe');
+            iframe.contentWindow.postMessage('nextVideo', '*');
         }
 
-        function prevStory() {
-            const prevStoryLink = {
-                '/story1/': '/story3/',
-                '/story2/': '/story1/',
-                '/story3/': '/story2/'
-            }[window.location.pathname];
-            window.location.href = prevStoryLink;
+        function prevVideo() {
+            const iframe = document.querySelector('iframe');
+            iframe.contentWindow.postMessage('previousVideo', '*');
         }
 
         document.addEventListener('touchstart', (e) => {
