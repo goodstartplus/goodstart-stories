@@ -24,23 +24,51 @@
             height: 100%;
             border: none;
         }
-        #next-video-btn {
+        #next-video-button {
             position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background-color: rgba(255, 255, 255, 0.7);
+            bottom: 10px;
+            right: 10px;
+            padding: 8px 18px;
+            background-color: #000;
+            color: #fff;
             border: none;
-            padding: 10px 20px;
-            font-size: 16px;
+            border-radius: 25px;
+            font-size: 13px;
             cursor: pointer;
-            border-radius: 5px;
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        #next-video-button:hover {
+            background-color: #333;
+        }
+        #back-to-gallery {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+        #back-to-gallery:hover {
+            background-color: #333;
         }
     </style>
 </head>
 <body>
     <div class="story">
-        <iframe id="youtube-player" src="https://www.youtube.com/embed/videoseries?list=PLgsOKGPevMvDW4vesGBUnz_kNe6fIg3tC&autoplay=1&mute=0&controls=0&loop=1&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&shuffle=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        <button id="next-video-btn">Próximo Vídeo →</button>
+        <iframe id="youtube-player" src="https://www.youtube.com/embed/videoseries?list=PLgsOKGPevMvBu86dGcTVcAjdLhdDQ-Ov6&autoplay=1&mute=0&controls=0&loop=1&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&index=99" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <button id="next-video-button">Próximo Vídeo →</button>
+        <a href="https://goodstart-stories.pages.dev/" id="back-to-gallery">←</a>
     </div>
 
     <script>
@@ -57,6 +85,11 @@
         }
 
         function onPlayerReady(event) {
+            player.playVideoAt(player.getPlaylist().length - 1);
+            document.getElementById('next-video-button').addEventListener('click', () => {
+                nextVideo();
+            });
+
             document.addEventListener('touchstart', (e) => {
                 touchStartY = e.changedTouches[0].screenY;
             });
@@ -65,30 +98,17 @@
                 touchEndY = e.changedTouches[0].screenY;
                 handleSwipe();
             });
-
-            document.getElementById('next-video-btn').addEventListener('click', () => {
-                shuffleNextVideo();
-            });
         }
 
         function handleSwipe() {
             if (touchEndY < touchStartY - 50) {
-                shuffleNextVideo();
-            } else if (touchEndY > touchStartY + 50) {
-                prevVideo();
+                nextVideo();
             }
         }
 
-        function shuffleNextVideo() {
-            if (player && typeof player.playVideoAt === 'function') {
-                const randomIndex = Math.floor(Math.random() * player.getPlaylist().length);
-                player.playVideoAt(randomIndex);
-            }
-        }
-
-        function prevVideo() {
-            if (player && typeof player.previousVideo === 'function') {
-                player.previousVideo();
+        function nextVideo() {
+            if (player && typeof player.nextVideo === 'function') {
+                player.nextVideo();
             }
         }
 
