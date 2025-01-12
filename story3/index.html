@@ -41,12 +41,34 @@
         #next-video-button:hover {
             background-color: #333;
         }
+        #back-to-gallery {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+        #back-to-gallery:hover {
+            background-color: #333;
+        }
     </style>
 </head>
 <body>
     <div class="story">
         <iframe id="youtube-player" src="https://www.youtube.com/embed/videoseries?list=PLgsOKGPevMvDW4vesGBUnz_kNe6fIg3tC&autoplay=1&mute=0&controls=0&loop=1&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&index=99" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <button id="next-video-button">Próximo Vídeo →</button>
+        <a href="https://goodstart-stories.pages.dev/" id="back-to-gallery">⬅</a>
     </div>
 
     <script>
@@ -63,7 +85,7 @@
         }
 
         function onPlayerReady(event) {
-            player.playVideoAt(player.getPlaylist().length - 1); // Começa pelo último vídeo da playlist
+            player.playVideoAt(player.getPlaylist().length - 1);
             document.getElementById('next-video-button').addEventListener('click', () => {
                 nextVideo();
             });
