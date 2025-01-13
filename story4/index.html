@@ -66,14 +66,20 @@
             position: absolute;
             bottom: 60px;
             left: 10px;
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: rgba(0, 0, 0, 0.9);
             color: #fff;
-            padding: 5px 10px;
-            border-radius: 10px;
-            font-size: 12px;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 14px;
             display: none;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.7);
+            box-shadow: 0px 2px 10px rgba(255, 255, 255, 0.7);
+            animation: pulse 1.5s infinite;
             z-index: 1000;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
@@ -100,7 +106,10 @@
         }
 
         function onPlayerReady(event) {
-            player.playVideoAt(player.getPlaylist().length - 1);
+            const playlistSize = player.getPlaylist().length;
+            const randomIndex = Math.floor(Math.random() * playlistSize);
+            player.playVideoAt(randomIndex);
+
             document.getElementById('next-video-button').addEventListener('click', () => {
                 nextVideo();
             });
@@ -118,7 +127,7 @@
                 document.getElementById('tooltip').style.display = 'block';
                 setTimeout(() => {
                     document.getElementById('tooltip').style.display = 'none';
-                }, 5000);
+                }, 30000);
             }, 15000);
         }
 
