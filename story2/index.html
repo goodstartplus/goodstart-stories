@@ -62,54 +62,96 @@
         #back-to-gallery:hover {
             background-color: #333;
         }
+        #tooltip {
+            position: absolute;
+            bottom: 60px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            display: none;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+        #transition-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://app.goodstart.com.br/app-playlist-rotator/transition-screen.png');
+            background-size: cover;
+            background-position: center;
+            display: none;
+            z-index: 2000;
+        }
     </style>
 </head>
 <body>
     <div class="story">
-        <iframe id="youtube-player" src="https://www.youtube.com/embed/videoseries?list=PLgsOKGPevMvBu86dGcTVcAjdLhdDQ-Ov6&autoplay=1&mute=0&controls=0&loop=1&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&index=99" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <div id="transition-screen"></div>
+        <iframe id="youtube-player" src="https://www.youtube.com/embed/videoseries?list=PLgsOKGPevMvBu86dGcTVcAjdLhdDQ-Ov6&autoplay=1&mute=0&controls=0&loop=1&modestbranding=1&rel=0&playsinline=1&enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <button id="next-video-button">Próximo Vídeo →</button>
-        <a href="https://goodstart-stories.pages.dev/" id="back-to-gallery">←</a>
+        <a href="https://goodstart-stories.pages.dev/" id="back-to-gallery">
+            <img src="https://app.goodstart.com.br/app-playlist-rotator/playlist-icon.png" alt="Galeria" style="width: 24px; height: 24px;">
+        </a>
+        <div id="tooltip">Ver outras playlists</div>
     </div>
 
     <script>
         let player;
-        let touchStartY = 0;
-        let touchEndY = 0;
+        let transitionInProgress = false;
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-player', {
                 events: {
-                    'onReady': onPlayerReady
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
                 }
             });
         }
 
         function onPlayerReady(event) {
-            player.playVideoAt(player.getPlaylist().length - 1);
-            document.getElementById('next-video-button').addEventListener('click', () => {
-                nextVideo();
-            });
+            const playlistSize = player.getPlaylist().length;
+            const randomIndex = Math.floor(Math.random() * playlistSize);
+            player.playVideoAt(randomIndex);
+            document.getElementById('next-video-button').addEventListener('click', showTransitionAndNext);
 
-            document.addEventListener('touchstart', (e) => {
-                touchStartY = e.changedTouches[0].screenY;
-            });
-
-            document.addEventListener('touchend', (e) => {
-                touchEndY = e.changedTouches[0].screenY;
-                handleSwipe();
-            });
+            setTimeout(() => {
+                const tooltip = document.getElementById('tooltip');
+                tooltip.style.display = 'block';
+                setTimeout(() => {
+                    tooltip.style.display = 'none';
+                }, 30000);
+            }, 15000);
         }
 
-        function handleSwipe() {
-            if (touchEndY < touchStartY - 50) {
-                nextVideo();
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.BUFFERING && !transitionInProgress) {
+                showTransitionAndNext();
             }
         }
 
-        function nextVideo() {
-            if (player && typeof player.nextVideo === 'function') {
-                player.nextVideo();
-            }
+        function showTransitionAndNext() {
+            transitionInProgress = true;
+            const transition = document.getElementById('transition-screen');
+            transition.style.display = 'block';
+            setTimeout(() => {
+                if (player && typeof player.nextVideo === 'function') {
+                    player.nextVideo();
+                }
+                setTimeout(() => {
+                    transition.style.display = 'none';
+                    transitionInProgress = false;
+                }, 800);
+            }, 100);
         }
 
         const tag = document.createElement('script');
