@@ -119,6 +119,9 @@
         }
 
         function onPlayerReady(event) {
+            const playlistSize = player.getPlaylist().length;
+            const randomIndex = Math.floor(Math.random() * playlistSize);
+            player.playVideoAt(randomIndex);
             document.getElementById('next-video-button').addEventListener('click', showTransitionAndNext);
         }
 
