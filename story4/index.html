@@ -107,8 +107,6 @@
 
     <script>
         let player;
-        let touchStartY = 0;
-        let touchEndY = 0;
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-player', {
@@ -120,16 +118,16 @@
         }
 
         function onPlayerReady(event) {
-            document.getElementById('next-video-button').addEventListener('click', showTransitionAndNext);
+            document.getElementById('next-video-button').addEventListener('click', () => showTransitionAndNext(true));
         }
 
         function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.ENDED || event.data === YT.PlayerState.BUFFERING) {
-                showTransitionAndNext();
+            if (event.data === YT.PlayerState.ENDED) {
+                showTransitionAndNext(false);
             }
         }
 
-        function showTransitionAndNext() {
+        function showTransitionAndNext(isManual) {
             const transition = document.getElementById('transition-screen');
             transition.style.display = 'block';
             setTimeout(() => {
@@ -139,7 +137,7 @@
                 setTimeout(() => {
                     transition.style.display = 'none';
                 }, 800);
-            }, 100);
+            }, isManual ? 100 : 500);
         }
 
         const tag = document.createElement('script');
