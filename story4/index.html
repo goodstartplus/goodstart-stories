@@ -123,6 +123,14 @@
             const randomIndex = Math.floor(Math.random() * playlistSize);
             player.playVideoAt(randomIndex);
             document.getElementById('next-video-button').addEventListener('click', showTransitionAndNext);
+
+            setTimeout(() => {
+                const tooltip = document.getElementById('tooltip');
+                tooltip.style.display = 'block';
+                setTimeout(() => {
+                    tooltip.style.display = 'none';
+                }, 30000);
+            }, 15000);
         }
 
         function onPlayerStateChange(event) {
