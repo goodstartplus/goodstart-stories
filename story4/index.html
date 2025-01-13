@@ -143,18 +143,18 @@
         }
 
         function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.ENDED) {
-                nextVideo();
+            if (event.data === YT.PlayerState.ENDED || event.data === YT.PlayerState.BUFFERING) {
+                showTransitionAndNext();
             }
         }
 
         function handleSwipe() {
             if (touchEndY < touchStartY - 50) {
-                nextVideo();
+                showTransitionAndNext();
             }
         }
 
-        function nextVideo() {
+        function showTransitionAndNext() {
             const transition = document.getElementById('transition-screen');
             transition.style.display = 'block';
             setTimeout(() => {
