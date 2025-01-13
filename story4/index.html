@@ -120,13 +120,11 @@
         }
 
         function onPlayerReady(event) {
-            document.getElementById('next-video-button').addEventListener('click', () => {
-                showTransitionAndNext();
-            });
+            document.getElementById('next-video-button').addEventListener('click', showTransitionAndNext);
         }
 
         function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.ENDED) {
+            if (event.data === YT.PlayerState.ENDED || event.data === YT.PlayerState.BUFFERING) {
                 showTransitionAndNext();
             }
         }
