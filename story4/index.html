@@ -97,7 +97,7 @@
 <body>
     <div class="story">
         <div id="transition-screen"></div>
-        <iframe id="youtube-player" src="https://www.youtube.com/embed/videoseries?list=PL9YuDAYDWyQNXrWSxKaw_cT4-5vMzFCEL&autoplay=1&mute=0&controls=0&loop=1&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&index=99" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe id="youtube-player" src="https://www.youtube.com/embed/videoseries?list=PL9YuDAYDWyQNXrWSxKaw_cT4-5vMzFCEL&autoplay=1&mute=0&controls=0&loop=1&modestbranding=1&rel=0&playsinline=1&enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <button id="next-video-button">Próximo Vídeo →</button>
         <a href="https://goodstart-stories.pages.dev/" id="back-to-gallery">
             <img src="https://app.goodstart.com.br/app-playlist-rotator/playlist-icon.png" alt="Galeria" style="width: 24px; height: 24px;">
@@ -120,36 +120,13 @@
         }
 
         function onPlayerReady(event) {
-            player.playVideoAt(player.getPlaylist().length - 1);
             document.getElementById('next-video-button').addEventListener('click', () => {
-                nextVideo();
+                showTransitionAndNext();
             });
-
-            document.addEventListener('touchstart', (e) => {
-                touchStartY = e.changedTouches[0].screenY;
-            });
-
-            document.addEventListener('touchend', (e) => {
-                touchEndY = e.changedTouches[0].screenY;
-                handleSwipe();
-            });
-
-            setTimeout(() => {
-                document.getElementById('tooltip').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('tooltip').style.display = 'none';
-                }, 30000);
-            }, 15000);
         }
 
         function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.ENDED || event.data === YT.PlayerState.BUFFERING) {
-                showTransitionAndNext();
-            }
-        }
-
-        function handleSwipe() {
-            if (touchEndY < touchStartY - 50) {
+            if (event.data === YT.PlayerState.ENDED) {
                 showTransitionAndNext();
             }
         }
