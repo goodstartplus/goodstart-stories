@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding Goodstart+</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        .question {
+            display: none;
+        }
+        .question.active {
+            display: block;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .progress {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            width: 0;
+            height: 10px;
+            background-color: #007BFF;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="question active" id="q1">
+            <h2>Você já estudou inglês antes?</h2>
+            <button onclick="nextQuestion('Sim')">Sim</button>
+            <button onclick="nextQuestion('Não')">Não</button>
+        </div>
+        <div class="question" id="q2">
+            <h2>Qual o seu principal objetivo com o inglês?</h2>
+            <button onclick="nextQuestion('Trabalho')">Trabalho</button>
+            <button onclick="nextQuestion('Viagens')">Viagens</button>
+            <button onclick="nextQuestion('Estudos')">Estudos</button>
+            <button onclick="nextQuestion('Hobbies')">Hobbies</button>
+        </div>
+        <div class="question" id="q3">
+            <h2>Sobre quais temas você gostaria de aprender mais?</h2>
+            <button onclick="nextQuestion('Reuniões e apresentações')">Reuniões e apresentações</button>
+            <button onclick="nextQuestion('Conversas informais')">Conversas informais</button>
+            <button onclick="nextQuestion('Inglês para viagens')">Inglês para viagens</button>
+            <button onclick="nextQuestion('Cultura internacional')">Cultura internacional</button>
+        </div>
+        <div class="question" id="q4">
+            <h2>Qual sua faixa etária?</h2>
+            <button onclick="submitAnswers('18-25')">18-25</button>
+            <button onclick="submitAnswers('26-35')">26-35</button>
+            <button onclick="submitAnswers('36-50')">36-50</button>
+            <button onclick="submitAnswers('50+')">50+</button>
+        </div>
+        <div class="question" id="final">
+            <h2>Obrigado por responder!</h2>
+            <p>Estamos preparando seu conteúdo personalizado...</p>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        let answers = [];
+
+        function nextQuestion(answer) {
+            answers.push(answer);
+            document.getElementById(`q${currentQuestion}`).classList.remove('active');
+            currentQuestion++;
+            document.getElementById(`q${currentQuestion}`).classList.add('active');
+            updateProgressBar();
+        }
+
+        function submitAnswers(answer) {
+            answers.push(answer);
+            document.getElementById(`q${currentQuestion}`).classList.remove('active');
+            document.getElementById('final').classList.add('active');
+            updateProgressBar();
+            console.log('Respostas:', answers);
+
+            // Aqui você pode integrar com Uncanny Automator via webhook
+            // Exemplo:
+            /* fetch('URL_DO_WEBHOOK', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ respostas: answers })
+            }); */
+        }
+
+        function updateProgressBar() {
+            const progress = (currentQuestion - 1) / 4 * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+    </script>
+</body>
+</html>
